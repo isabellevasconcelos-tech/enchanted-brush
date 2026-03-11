@@ -1,0 +1,1355 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cinzel Decorative", serif;
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Lora", serif;
+
+  /* Marrom — backgrounds medievais */
+  --color-cream-50: #1A1209;
+  --color-cream-100: #231A0E;
+  --color-cream-200: #2E2214;
+
+  /* Bordo sangue — primary accent */
+  --color-rose-pastel: #2A0E10;
+  --color-rose-light: #4A1820;
+  --color-rose-medium: #7B1D2A;
+  --color-rose-accent: #8B1A2B;
+  --color-rose-deep: #A02035;
+
+  /* Azul medieval */
+  --color-blue-pastel: #0E1620;
+  --color-blue-light: #1C2E45;
+  --color-blue-medium: #3A6B9F;
+  --color-blue-accent: #2C5F8A;
+  --color-blue-deep: #4A88B8;
+
+  /* Dourado / Amarelo medieval */
+  --color-gold-pastel: #2A2008;
+  --color-gold-light: #8B7425;
+  --color-gold-medium: #D4A017;
+  --color-gold-accent: #C8962E;
+  --color-gold-deep: #E8C252;
+
+  /* Pergaminho — textos quentes */
+  --color-enchanted: #F5E6C8;
+  --color-enchanted-light: #D4C4A0;
+  --color-enchanted-muted: #9E8A6A;
+
+  --animate-fade-in: fade-in 0.6s ease-out;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-sparkle: sparkle 1.5s ease-in-out infinite;
+  --animate-chat-in: chat-slide-in 0.4s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes chat-slide-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+body {
+  font-family: "Lora", serif;
+  background-color: #1A1209;
+  color: #F5E6C8;
+  font-weight: 400;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+}
+
+.font-display {
+  font-family: "Cinzel Decorative", serif;
+  font-weight: 700;
+}
+
+.ornament-border {
+  border-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #8B1A2B 20%,
+    #C8962E 50%,
+    #8B1A2B 80%,
+    transparent 100%
+  ) 1;
+}
+
+.card-enchanted {
+  background: linear-gradient(135deg, #1A1209 0%, #2A0E10 50%, #0E1620 100%);
+  background-size: 200% 200%;
+  transition: background-position 0.5s ease;
+}
+
+.card-enchanted:hover {
+  background-position: 100% 100%;
+}
+
+.btn-enchanted {
+  background: linear-gradient(135deg, #8B1A2B, #C8962E, #8B1A2B);
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+  transition: all 0.3s ease;
+}
+
+.btn-enchanted:hover {
+  background-size: 300% 300%;
+  box-shadow: 0 4px 20px rgba(200, 150, 46, 0.3);
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.input-enchanted {
+  border: 1px solid #4A1820;
+  background: #1A1209;
+  color: #F5E6C8;
+  transition: all 0.3s ease;
+}
+
+.input-enchanted:focus {
+  outline: none;
+  border-color: #C8962E;
+  box-shadow: 0 0 0 3px rgba(200, 150, 46, 0.15);
+}
+
+/* ========== Brand Title — Bordo + Mini Star Sparkles ========== */
+
+.header-brand-title {
+  color: #C8962E;
+  text-shadow: 0 0 8px rgba(200, 150, 46, 0.3), 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* 4-point mini star sparkle */
+.brand-sparkle {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.brand-sparkle::before,
+.brand-sparkle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 1px;
+}
+
+/* Vertical line of the + star */
+.brand-sparkle::before {
+  width: var(--s-size, 2px);
+  height: calc(var(--s-size, 2px) * 4);
+  background: var(--s-color, #D4AF37);
+  box-shadow: 0 0 var(--s-size, 2px) var(--s-color, #D4AF37);
+  animation: sparkle-4pt var(--s-speed, 2s) ease-in-out var(--s-delay, 0s) infinite;
+}
+
+/* Horizontal line of the + star */
+.brand-sparkle::after {
+  width: calc(var(--s-size, 2px) * 4);
+  height: var(--s-size, 2px);
+  background: var(--s-color, #D4AF37);
+  box-shadow: 0 0 var(--s-size, 2px) var(--s-color, #D4AF37);
+  animation: sparkle-4pt var(--s-speed, 2s) ease-in-out var(--s-delay, 0s) infinite;
+}
+
+@keyframes sparkle-4pt {
+  0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(0.4); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Home hero title */
+.home-brand-title {
+  color: #C8962E;
+  text-shadow:
+    0 0 15px rgba(200, 150, 46, 0.4),
+    0 0 40px rgba(200, 150, 46, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* ========== Medieval Warm Glow — Home Cards ========== */
+
+.home-card {
+  position: relative;
+  box-shadow:
+    0 0 8px rgba(200, 150, 46, 0.08),
+    inset 0 1px 0 rgba(200, 150, 46, 0.06);
+}
+
+.home-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 1rem;
+  background: linear-gradient(
+    135deg,
+    rgba(200, 150, 46, 0.12) 0%,
+    transparent 40%,
+    transparent 60%,
+    rgba(200, 150, 46, 0.08) 100%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.home-card:hover::before {
+  opacity: 1;
+}
+
+/* ========== Medieval Floating Particles ========== */
+
+@keyframes medieval-float-1 {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+  25% { transform: translateY(-15px) translateX(5px); opacity: 0.7; }
+  50% { transform: translateY(-8px) translateX(-3px); opacity: 0.4; }
+  75% { transform: translateY(-20px) translateX(8px); opacity: 0.6; }
+}
+
+@keyframes medieval-float-2 {
+  0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.2; }
+  50% { transform: translateY(-12px) scale(1.2); opacity: 0.8; }
+}
+
+/* ========== Enchanted Book Button (Home) ========== */
+
+.story-open-btn {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #1A1209, #2A0E10);
+  border: 1.5px solid rgba(200, 168, 78, 0.4);
+  border-radius: 9999px;
+  color: #FDE68A;
+  text-decoration: none;
+  font-family: "Playfair Display", serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  box-shadow:
+    0 2px 12px rgba(198, 40, 40, 0.3),
+    0 0 20px rgba(200, 168, 78, 0.08);
+  animation: story-btn-glow 3s ease-in-out infinite;
+  overflow: hidden;
+}
+
+.story-open-btn:hover {
+  background: linear-gradient(135deg, #2A0E10, #4A1820);
+  border-color: rgba(200, 168, 78, 0.7);
+  box-shadow:
+    0 4px 20px rgba(198, 40, 40, 0.4),
+    0 0 30px rgba(200, 168, 78, 0.15);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.story-open-btn-text {
+  white-space: nowrap;
+}
+
+.story-open-btn-sparkle {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(253, 230, 138, 0.15), transparent);
+  animation: story-btn-shine 4s ease-in-out infinite;
+}
+
+@keyframes story-btn-glow {
+  0%, 100% { box-shadow: 0 2px 12px rgba(198, 40, 40, 0.3), 0 0 20px rgba(200, 168, 78, 0.08); }
+  50% { box-shadow: 0 2px 16px rgba(198, 40, 40, 0.4), 0 0 30px rgba(200, 168, 78, 0.15); }
+}
+
+@keyframes story-btn-shine {
+  0% { left: -100%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+@media (max-width: 480px) {
+  .story-open-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.6rem;
+  }
+}
+
+/* ========== Splash Screen ========== */
+
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0F0A05;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  overflow: hidden;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.splash-exit {
+  opacity: 0;
+  transform: scale(1.1);
+}
+
+/* Stars */
+.stars-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  animation: star-twinkle 2s ease-in-out infinite;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Quote */
+.splash-quote {
+  opacity: 0;
+  text-align: center;
+  color: #E0E0E0;
+  font-family: "Lora", serif;
+  transition: all 1.2s ease;
+  position: absolute;
+  z-index: 2;
+}
+
+.splash-quote.visible {
+  opacity: 1;
+  animation: splash-fade-in 2s ease-out forwards;
+}
+
+.splash-quote.fade-up {
+  animation: splash-fade-up 1s ease forwards;
+}
+
+.splash-quote-line2 {
+  display: inline-block;
+  opacity: 0;
+  animation: splash-fade-in 1.5s ease-out 1.2s forwards;
+}
+
+@keyframes splash-fade-in {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes splash-fade-up {
+  to { opacity: 0; transform: translateY(-40px) scale(0.95); }
+}
+
+/* ---- Painting scene ---- */
+.splash-painting {
+  opacity: 0;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.splash-painting.visible {
+  opacity: 1;
+}
+
+/* Shirt white outline and body */
+.shirt-white-outline {
+  opacity: 0;
+  animation: shirt-appear 1.5s ease-out forwards;
+}
+
+.shirt-white-body {
+  opacity: 0;
+  animation: shirt-body-appear 2s ease-out 0.5s forwards;
+}
+
+@keyframes shirt-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shirt-body-appear {
+  from { opacity: 0; }
+  to { opacity: 0.06; }
+}
+
+/* Paintbrush */
+.splash-painting .splash-brush {
+  position: absolute;
+  z-index: 3;
+  top: -10px;
+  left: -40px;
+  animation: brush-paint-new 6s ease-in-out forwards;
+  transform-origin: bottom center;
+}
+
+.splash-painting.painting-done .splash-brush {
+  animation: brush-lift 1.2s ease forwards;
+}
+
+@keyframes brush-paint-new {
+  0% {
+    transform: translate(-80px, -20px) rotate(-25deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+    transform: translate(-30px, 0px) rotate(-10deg);
+  }
+  18% {
+    transform: translate(40px, -30px) rotate(8deg);
+  }
+  28% {
+    transform: translate(100px, 10px) rotate(-6deg);
+  }
+  38% {
+    transform: translate(60px, 60px) rotate(12deg);
+  }
+  48% {
+    transform: translate(130px, 30px) rotate(-4deg);
+  }
+  58% {
+    transform: translate(80px, 100px) rotate(10deg);
+  }
+  68% {
+    transform: translate(140px, 80px) rotate(-8deg);
+  }
+  78% {
+    transform: translate(100px, 130px) rotate(6deg);
+  }
+  88% {
+    transform: translate(150px, 110px) rotate(-3deg);
+  }
+  100% {
+    transform: translate(130px, 60px) rotate(5deg);
+    opacity: 1;
+  }
+}
+
+@keyframes brush-lift {
+  0% {
+    transform: translate(130px, 60px) rotate(5deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(160px, -40px) rotate(-15deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(180px, -80px) rotate(-25deg);
+    opacity: 0;
+  }
+}
+
+/* Art layers — progressive reveal */
+.art-layer {
+  opacity: 0;
+  animation: art-bloom 1.2s ease-out forwards;
+}
+
+@keyframes art-bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Flowers grow in */
+.flower {
+  opacity: 0;
+  transform-origin: center;
+  animation: flower-grow 0.8s ease-out forwards;
+}
+
+@keyframes flower-grow {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-30deg);
+  }
+  70% {
+    transform: scale(1.15) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Stars sparkle in */
+.shirt-star {
+  opacity: 0;
+  transform-origin: center;
+  animation: star-sparkle-in 0.6s ease-out forwards;
+}
+
+@keyframes star-sparkle-in {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+  100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+}
+
+/* Vine stroke reveal */
+.vine-path {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: vine-draw 1s ease-out forwards;
+}
+
+@keyframes vine-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Leaves */
+.leaf {
+  opacity: 0;
+  animation: flower-grow 0.6s ease-out forwards;
+}
+
+/* Mandala */
+.art-mandala {
+  transform-origin: 120px 130px;
+}
+
+/* Brand name */
+.splash-brand {
+  opacity: 0;
+  text-align: center;
+  color: #FDE68A;
+  position: relative;
+  z-index: 2;
+  transform: translateY(20px);
+  transition: all 1.2s ease;
+}
+
+.splash-brand.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.splash-brand h1 {
+  font-family: "Cinzel Decorative", serif;
+  text-shadow: 0 0 40px rgba(253, 230, 138, 0.4), 0 0 80px rgba(253, 230, 138, 0.15);
+}
+
+.splash-brand-line {
+  width: 0;
+  height: 2px;
+  margin: 0.75rem auto 0;
+  background: linear-gradient(90deg, transparent, #8B1A2B, #C8962E, #8B1A2B, transparent);
+  transition: width 1.2s ease 0.3s;
+}
+
+.splash-brand.visible .splash-brand-line {
+  width: 220px;
+}
+
+/* Falling star */
+.splash-star-drop {
+  opacity: 0;
+  position: relative;
+  z-index: 2;
+  height: 0;
+  pointer-events: none;
+}
+
+.splash-star-drop.visible {
+  opacity: 1;
+}
+
+.splash-star-drop .falling-star {
+  animation: star-drop 1.3s ease-in forwards;
+}
+
+@keyframes star-drop {
+  0% {
+    opacity: 1;
+    transform: translateY(-60px) scale(0.5);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(0px) scale(1);
+  }
+  45% {
+    transform: translateY(-8px) scale(1.1);
+  }
+  60% {
+    transform: translateY(4px) scale(0.9);
+  }
+  75% {
+    transform: translateY(-2px) scale(1.05);
+  }
+  90% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Enter button */
+.splash-button {
+  opacity: 0;
+  position: relative;
+  z-index: 2;
+  padding: 0.875rem 2.5rem;
+  border: 1px solid rgba(253, 230, 138, 0.4);
+  border-radius: 9999px;
+  background: transparent;
+  color: #FDE68A;
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  transform: translateY(20px) scale(0.8);
+  pointer-events: none;
+}
+
+.splash-button.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  transition-delay: 1.2s;
+  animation: button-glow 2s ease-in-out 2s infinite;
+}
+
+@keyframes button-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(253, 230, 138, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(253, 230, 138, 0.35), 0 0 60px rgba(253, 230, 138, 0.1);
+  }
+}
+
+.splash-button:hover {
+  background: rgba(253, 230, 138, 0.1);
+  border-color: #FDE68A;
+  box-shadow: 0 0 30px rgba(253, 230, 138, 0.3), inset 0 0 25px rgba(253, 230, 138, 0.05);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.splash-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.splash-button-star {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+/* ========== My Story — Papyrus Scroll ========== */
+
+.papyrus-scroll {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.papyrus-roll {
+  height: 20px;
+  background: linear-gradient(180deg, #8B6914, #C8A84E 30%, #A67C00 60%, #8B6914);
+  border-radius: 10px;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.15);
+  position: relative;
+  z-index: 2;
+}
+
+.papyrus-roll::before,
+.papyrus-roll::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 28px;
+  background: linear-gradient(180deg, #6B4E1B, #8B6914 40%, #A67C00 60%, #6B4E1B);
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+}
+
+.papyrus-roll::before { left: -8px; }
+.papyrus-roll::after { right: -8px; }
+
+.papyrus-body {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(198, 40, 40, 0.04) 0%, transparent 12%),
+    radial-gradient(circle at 85% 70%, rgba(198, 40, 40, 0.03) 0%, transparent 10%),
+    radial-gradient(circle at 50% 50%, rgba(33, 150, 243, 0.02) 0%, transparent 15%),
+    linear-gradient(160deg, #1A1209 0%, #231A0E 25%, #2E2214 50%, #1A1209 75%, #231A0E 100%);
+  border-left: 3px solid rgba(200, 168, 78, 0.2);
+  border-right: 3px solid rgba(200, 168, 78, 0.2);
+  padding: 2.5rem 2rem;
+  position: relative;
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.15),
+    inset 0 0 120px rgba(26, 18, 9, 0.05);
+}
+
+@media (min-width: 640px) {
+  .papyrus-body {
+    padding: 3rem 3rem;
+  }
+}
+
+/* Typography */
+.papyrus-title {
+  font-family: "Cinzel Decorative", serif;
+  color: #C8A84E;
+  font-size: 1.8rem;
+  text-align: center;
+  line-height: 1.3;
+  text-shadow: 0 0 20px rgba(200, 168, 78, 0.2);
+}
+
+@media (min-width: 640px) {
+  .papyrus-title {
+    font-size: 2.4rem;
+  }
+}
+
+.papyrus-subtitle {
+  font-family: "Playfair Display", serif;
+  color: rgba(200, 168, 78, 0.5);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.papyrus-chapter-num {
+  font-family: "Playfair Display", serif;
+  color: rgba(200, 168, 78, 0.4);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.papyrus-chapter-subtitle {
+  font-family: "Playfair Display", serif;
+  color: #C8A84E;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  text-align: center;
+  margin-bottom: 0.4rem;
+  opacity: 0.7;
+}
+
+.papyrus-chapter-title {
+  font-family: "Cinzel Decorative", serif;
+  color: #F5E6C8;
+  font-size: 1.2rem;
+  text-align: center;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .papyrus-chapter-title {
+    font-size: 1.5rem;
+  }
+}
+
+.papyrus-text {
+  font-family: "Lora", serif;
+  color: rgba(240, 230, 214, 0.8);
+  font-size: 0.95rem;
+  line-height: 2;
+  text-align: justify;
+  text-indent: 0;
+}
+
+@media (min-width: 640px) {
+  .papyrus-text {
+    font-size: 1.05rem;
+    line-height: 2.1;
+  }
+}
+
+.papyrus-drop-cap {
+  float: left;
+  font-family: "Cinzel Decorative", serif;
+  font-size: 3rem;
+  line-height: 0.8;
+  padding: 0.15rem 0.5rem 0 0;
+  color: #C8A84E;
+  text-shadow: 0 0 12px rgba(200, 168, 78, 0.25);
+}
+
+.papyrus-quote {
+  font-family: "Cinzel Decorative", serif;
+  color: #C8A84E;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 1.5rem;
+  line-height: 1.7;
+  font-style: italic;
+  opacity: 0.85;
+  text-shadow: 0 0 10px rgba(200, 168, 78, 0.15);
+}
+
+.papyrus-closing {
+  font-family: "Playfair Display", serif;
+  color: rgba(240, 230, 214, 0.5);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+/* ========== Touch Sparkle (Magic Dust) ========== */
+
+.touch-sparkle-container {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.touch-particle {
+  position: fixed;
+  border-radius: 50%;
+  background: #FDE68A;
+  box-shadow: 0 0 4px #FDE68A, 0 0 8px rgba(139, 26, 43, 0.4);
+  pointer-events: none;
+  animation: touch-burst 0.6s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+
+.touch-flash {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(253, 230, 138, 0.6);
+  box-shadow: 0 0 12px rgba(253, 230, 138, 0.5), 0 0 24px rgba(139, 26, 43, 0.3);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: touch-flash-fade 0.45s ease-out forwards;
+}
+
+@keyframes touch-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--dist)) scale(0.3);
+  }
+}
+
+@keyframes touch-flash-fade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.5);
+  }
+}
+
+/* ========== Hidden Stars System ========== */
+
+/* Hidden Star — subtle but visible */
+.hidden-star {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  color: rgba(245, 158, 11, 0.35);
+  transition: color 0.6s ease, transform 0.6s ease, filter 0.6s ease;
+  z-index: 1;
+  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.2));
+  animation: star-idle-twinkle 3s ease-in-out infinite;
+}
+
+@keyframes star-idle-twinkle {
+  0%, 100% { color: rgba(245, 158, 11, 0.3); filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.15)); }
+  50% { color: rgba(245, 158, 11, 0.5); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.35)); }
+}
+
+.hidden-star .hidden-star-svg {
+  transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+.hidden-star:hover {
+  color: rgba(245, 158, 11, 0.9);
+  cursor: pointer;
+  filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.7));
+  animation: none;
+}
+
+.hidden-star:hover .hidden-star-svg {
+  transform: rotate(360deg) scale(1.5);
+}
+
+.hidden-star:active {
+  color: rgba(245, 158, 11, 1);
+  filter: drop-shadow(0 0 16px rgba(245, 158, 11, 0.9)) drop-shadow(0 0 30px rgba(253, 230, 138, 0.5));
+}
+
+.hidden-star:active .hidden-star-svg {
+  transform: rotate(720deg) scale(2);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.hidden-star.found {
+  color: rgba(245, 158, 11, 0.2);
+  cursor: default;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.25));
+  animation: star-found-glow 2s ease-in-out infinite;
+}
+
+.hidden-star.found .hidden-star-svg {
+  transform: scale(1.2);
+}
+
+@keyframes star-found-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.2)); }
+  50% { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.35)); }
+}
+
+/* Magic Dust burst */
+.hidden-star-dust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hidden-star-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #FDE68A;
+  box-shadow: 0 0 4px #FDE68A;
+  animation: hidden-star-burst 0.8s ease-out forwards;
+  animation-delay: var(--delay);
+}
+
+@keyframes hidden-star-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--dist));
+  }
+}
+
+/* ========== Star Found Overlay ========== */
+
+.star-found-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: rgba(10, 10, 26, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: star-found-fade-in 0.4s ease;
+}
+
+@keyframes star-found-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.star-found-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+}
+
+/* Big glowing star */
+.star-found-big-star {
+  animation: star-found-appear 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  filter: drop-shadow(0 0 30px rgba(253, 230, 138, 0.8)) drop-shadow(0 0 60px rgba(245, 158, 11, 0.4));
+}
+
+@keyframes star-found-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.2) rotate(15deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* After appear, pulse glow */
+.star-found-big-star svg {
+  animation: star-found-pulse 2s ease-in-out 0.8s infinite;
+}
+
+@keyframes star-found-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(253, 230, 138, 0.6));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 40px rgba(253, 230, 138, 1));
+    transform: scale(1.08);
+  }
+}
+
+/* Radiating particles */
+.star-found-particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+}
+
+.star-found-particle {
+  position: absolute;
+  color: #FDE68A;
+  animation: star-found-burst 1s ease-out var(--delay) forwards;
+  opacity: 0;
+}
+
+@keyframes star-found-burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) scale(1);
+  }
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--dist)) scale(0);
+  }
+}
+
+/* Text */
+.star-found-message {
+  font-family: "Playfair Display", serif;
+  font-size: 1.25rem;
+  color: #FDE68A;
+  margin-top: 1.5rem;
+  text-shadow: 0 0 20px rgba(253, 230, 138, 0.4);
+  animation: star-found-text-in 0.6s ease 0.3s both;
+}
+
+.star-found-remaining {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1rem;
+  color: rgba(253, 230, 138, 0.7);
+  margin-top: 0.5rem;
+  font-style: italic;
+  animation: star-found-text-in 0.6s ease 0.5s both;
+}
+
+@keyframes star-found-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Progress stars row */
+.star-found-progress {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  animation: star-found-text-in 0.6s ease 0.7s both;
+}
+
+.star-found-progress-star {
+  color: rgba(255, 255, 255, 0.15);
+  transition: color 0.3s;
+}
+
+.star-found-progress-star.collected {
+  color: #FDE68A;
+  filter: drop-shadow(0 0 4px rgba(253, 230, 138, 0.5));
+}
+
+/* Close button */
+.star-found-close {
+  margin-top: 1.5rem;
+  padding: 0.6rem 2rem;
+  background: transparent;
+  border: 1px solid rgba(253, 230, 138, 0.4);
+  color: #FDE68A;
+  border-radius: 9999px;
+  font-family: "Playfair Display", serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+  animation: star-found-text-in 0.6s ease 0.9s both;
+}
+
+.star-found-close:hover {
+  background: rgba(253, 230, 138, 0.1);
+  border-color: rgba(253, 230, 138, 0.7);
+  box-shadow: 0 0 15px rgba(253, 230, 138, 0.2);
+}
+
+/* ========== Star Counter Widget ========== */
+
+.star-counter {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(26, 18, 9, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.star-counter:hover {
+  background: rgba(26, 18, 9, 0.95);
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 2px 15px rgba(245, 158, 11, 0.15);
+  transform: translateY(-1px);
+}
+
+.star-counter-icon {
+  color: #F59E0B;
+}
+
+.star-counter-text {
+  font-family: "Playfair Display", serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: #FDE68A;
+}
+
+.star-counter-pulse {
+  animation: star-counter-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes star-counter-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.25); box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+  100% { transform: scale(1); }
+}
+
+/* ========== Star Reward Modal ========== */
+
+.star-reward-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(10, 10, 26, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fade-in 0.5s ease;
+  padding: 1rem;
+}
+
+.star-reward-modal {
+  position: relative;
+  background: linear-gradient(135deg, #1A1209, #2A2008);
+  border: 2px solid #B8962A;
+  border-radius: 1.5rem;
+  padding: 2.5rem 2rem;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(245, 158, 11, 0.2);
+  overflow: hidden;
+}
+
+.star-reward-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.star-reward-floating-star {
+  position: absolute;
+  animation: star-twinkle 2s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+.star-reward-stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.star-reward-star {
+  color: #F59E0B;
+  animation: star-reward-spin 1.5s ease-out forwards;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.5));
+}
+
+@keyframes star-reward-spin {
+  from { transform: rotateY(0deg) scale(0); opacity: 0; }
+  to { transform: rotateY(720deg) scale(1); opacity: 1; }
+}
+
+.star-reward-title {
+  font-family: "Cinzel Decorative", serif;
+  color: #F5E6C8;
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.star-reward-text {
+  font-family: "Lora", serif;
+  color: #E0E0E0;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+.star-reward-coupon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.star-reward-code {
+  font-family: "Playfair Display", serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  color: #FFD54F;
+  background: rgba(184, 150, 42, 0.2);
+  border: 1px dashed #B8962A;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.star-reward-copy {
+  padding: 0.5rem 0.75rem;
+  background: #B8962A;
+  color: #0D0D0D;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: "Playfair Display", serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.star-reward-copy:hover {
+  background: #FFCA28;
+}
+
+.star-reward-discount {
+  font-family: "Lora", serif;
+  color: #9E9E9E;
+  font-size: 0.7rem;
+  font-style: italic;
+  margin-bottom: 1.25rem;
+}
+
+.star-reward-close {
+  padding: 0.6rem 1.5rem;
+  border: 1px solid #B8962A;
+  border-radius: 9999px;
+  background: transparent;
+  color: #F5E6C8;
+  font-family: "Playfair Display", serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.star-reward-close:hover {
+  background: rgba(184, 150, 42, 0.15);
+}
