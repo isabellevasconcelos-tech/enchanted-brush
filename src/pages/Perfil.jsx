@@ -10,7 +10,7 @@ const AVATARS = [
   { emoji: '✨', label: 'Brilho' },
   { emoji: '🦋', label: 'Borboleta' },
   { emoji: '🌸', label: 'Flor' },
-  { emoji: '🌈', label: 'Arco-íris' },
+  { emoji: '🌈', label: 'Arco-iris' },
   { emoji: '💎', label: 'Diamante' },
   { emoji: '🪻', label: 'Lavanda' },
   { emoji: '🌺', label: 'Hibisco' },
@@ -36,7 +36,6 @@ function LinhaProgresso({ status }) {
         const concluida = i <= etapaAtual
         return (
           <div key={etapa.key} className="flex items-center flex-1 last:flex-none">
-            {/* Círculo com ícone */}
             <div className="flex flex-col items-center">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-lg border-2 transition-all duration-500 ${
@@ -55,7 +54,6 @@ function LinhaProgresso({ status }) {
                 {etapa.label}
               </span>
             </div>
-            {/* Linha conectora */}
             {i < ETAPAS.length - 1 && (
               <div
                 className={`flex-1 h-0.5 mx-1 transition-all duration-500 ${
@@ -71,21 +69,45 @@ function LinhaProgresso({ status }) {
 }
 
 export default function Perfil() {
-  const { profile, profileComplete, saveProfile } = useProfile()
+  const { user, profile, profileComplete, profileExists, loading, saveProfile, signOut } = useProfile()
   const navigate = useNavigate()
 
-  const [editando, setEditando] = useState(!profileComplete)
+  const [editando, setEditando] = useState(false)
   const [form, setForm] = useState({ ...profile })
   const [salvo, setSalvo] = useState(false)
-  const [editandoAvatar, setEditandoAvatar] = useState(!profile.avatar)
+  const [erro, setErro] = useState('')
+  const [salvando, setSalvando] = useState(false)
+  const [editandoAvatar, setEditandoAvatar] = useState(false)
 
   // Pedidos
   const [pedidos, setPedidos] = useState([])
   const [carregandoPedidos, setCarregandoPedidos] = useState(false)
 
+  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!profile.whatsapp) return
+    if (!loading && !user) {
+      navigate('/login')
+    }
+  }, [user, loading, navigate])
 
+  // Start in edit mode if profile is not complete
+  useEffect(() => {
+    if (!loading && user && !profileExists) {
+      setEditando(true)
+      setForm({ ...profile })
+    }
+  }, [loading, user, profileExists, profile])
+
+  // Sync form when profile changes (after fetch)
+  useEffect(() => {
+    if (!editando) {
+      setForm({ ...profile })
+    }
+  }, [profile])
+
+  // Fetch orders
+  useEffect(() => {
+    if (!profile.whatsapp || !profileComplete) return
     setCarregandoPedidos(true)
     supabase
       .from('pedidos')
@@ -96,22 +118,21 @@ export default function Perfil() {
         if (!error && data) setPedidos(data)
         setCarregandoPedidos(false)
       })
-  }, [profile.whatsapp])
+  }, [profile.whatsapp, profileComplete])
 
   function handleChange(e) {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
+    setErro('')
   }
 
   async function handleCepBlur() {
     const cepLimpo = form.cep.replace(/\D/g, '')
     if (cepLimpo.length !== 8) return
-
     try {
       const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`)
       const data = await res.json()
       if (data.erro) return
-
       setForm((prev) => ({
         ...prev,
         rua: data.logradouro || '',
@@ -123,11 +144,22 @@ export default function Perfil() {
     }
   }
 
-  function handleSalvar(e) {
+  async function handleSalvar(e) {
     e.preventDefault()
-    saveProfile(form)
+    setErro('')
+    setSalvando(true)
+
+    const { error } = await saveProfile(form)
+
+    if (error) {
+      setErro(error.message)
+      setSalvando(false)
+      return
+    }
+
     setSalvo(true)
     setEditando(false)
+    setSalvando(false)
     setTimeout(() => setSalvo(false), 2000)
   }
 
@@ -135,6 +167,12 @@ export default function Perfil() {
     setForm({ ...profile })
     setEditando(true)
     setEditandoAvatar(false)
+    setErro('')
+  }
+
+  async function handleLogout() {
+    await signOut()
+    navigate('/')
   }
 
   function formatDate(dateStr) {
@@ -145,26 +183,58 @@ export default function Perfil() {
     })
   }
 
+  // Loading
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-8 h-8 border-2 border-gold-accent/30 border-t-gold-accent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (!user) return null
+
   return (
-    <div className="max-w-lg mx-auto animate-fade-in">
+    <div className="max-w-3xl mx-auto animate-fade-in">
+      <div className="papyrus-scroll">
+        <div className="papyrus-roll papyrus-roll-top" />
+        <div className="papyrus-body">
+
       <div className="text-center mb-4">
-        <h1 className="font-display text-3xl text-enchanted mb-2">Meu Perfil</h1>
-        <p className="text-enchanted-muted text-sm italic">
-          {editando ? 'Edite seus dados pessoais' : 'Seus dados e pedidos'}
+        <h1 className="papyrus-title" style={{ fontSize: '2rem' }}>Meu Perfil</h1>
+        <p className="papyrus-subtitle">
+          {!profileExists
+            ? 'Crie sua conta preenchendo seus dados'
+            : editando
+              ? 'Edite seus dados pessoais'
+              : 'Seus dados e pedidos'}
         </p>
+        {!profileExists && (
+          <div className="mt-3 p-3 rounded-xl bg-gold-accent/10 border border-gold-accent/30 max-w-sm mx-auto">
+            <p className="text-gold-accent text-xs font-heading tracking-wide">
+              Voce ainda nao tem uma conta. Preencha todos os campos obrigatorios para criar.
+            </p>
+          </div>
+        )}
       </div>
 
       <FloralDivider className="mb-6" />
 
       {editando ? (
-        /* ======================== MODO EDIÇÃO ======================== */
-        <form onSubmit={handleSalvar} className="bg-cream-50 rounded-2xl border border-rose-light/30 p-6 space-y-4">
+        /* ======================== MODO EDICAO ======================== */
+        <form onSubmit={handleSalvar} className="bg-[#2a1f14]/40 rounded-2xl border border-[#C8962E]/20 p-6 space-y-4">
+          {/* Error */}
+          {erro && (
+            <div className="p-3 rounded-xl bg-rose-accent/15 border border-rose-accent/30 text-rose-accent text-xs text-center animate-fade-in">
+              {erro}
+            </div>
+          )}
+
           {/* Avatar */}
           <div className="text-center">
             <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-rose-pastel/40 border-2 border-rose-light/50 flex items-center justify-center text-4xl shadow-inner">
               {form.avatar || '🎨'}
             </div>
-
             {editandoAvatar ? (
               <>
                 <p className="font-heading text-sm text-enchanted uppercase tracking-widest mb-3">
@@ -204,19 +274,20 @@ export default function Perfil() {
 
           <div className="flex items-center gap-3 py-1">
             <div className="h-px flex-1 bg-rose-light/40" />
-            <span className="text-enchanted-muted text-xs italic">Dados pessoais</span>
+            <span className="text-enchanted-muted text-xs italic">Dados pessoais *</span>
             <div className="h-px flex-1 bg-rose-light/40" />
           </div>
 
           <div>
             <label className="block text-sm font-heading text-enchanted uppercase tracking-widest mb-1.5">
-              Nome completo
+              Nome completo <span className="text-rose-accent">*</span>
             </label>
             <input
               type="text"
               name="nome"
               value={form.nome}
               onChange={handleChange}
+              required
               className="w-full input-enchanted rounded-xl px-4 py-2.5 text-sm"
               placeholder="Maria Silva"
             />
@@ -225,35 +296,41 @@ export default function Perfil() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-heading text-enchanted uppercase tracking-widest mb-1.5">
-                E-mail
+                E-mail <span className="text-rose-accent">*</span>
               </label>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
+                required
                 className="w-full input-enchanted rounded-xl px-4 py-2.5 text-sm"
                 placeholder="maria@email.com"
               />
             </div>
             <div>
               <label className="block text-sm font-heading text-enchanted uppercase tracking-widest mb-1.5">
-                WhatsApp
+                WhatsApp <span className="text-rose-accent">*</span>
               </label>
               <input
                 type="tel"
                 name="whatsapp"
                 value={form.whatsapp}
                 onChange={handleChange}
+                required
                 className="w-full input-enchanted rounded-xl px-4 py-2.5 text-sm"
                 placeholder="(51) 99999-9999"
               />
             </div>
           </div>
 
+          <p className="text-enchanted-muted text-[10px] italic text-center">
+            * Campos obrigatorios. Todos devem ser preenchidos para criar sua conta.
+          </p>
+
           <div className="flex items-center gap-3 py-1">
             <div className="h-px flex-1 bg-rose-light/40" />
-            <span className="text-enchanted-muted text-xs italic">Endereço de entrega</span>
+            <span className="text-enchanted-muted text-xs italic">Endereco de entrega</span>
             <div className="h-px flex-1 bg-rose-light/40" />
           </div>
 
@@ -289,7 +366,7 @@ export default function Perfil() {
             </div>
             <div>
               <label className="block text-sm font-heading text-enchanted uppercase tracking-widest mb-1.5">
-                Número
+                Numero
               </label>
               <input
                 type="text"
@@ -346,7 +423,7 @@ export default function Perfil() {
           </div>
 
           <div className="flex gap-3">
-            {profileComplete && (
+            {profileExists && (
               <button
                 type="button"
                 onClick={() => setEditando(false)}
@@ -357,17 +434,25 @@ export default function Perfil() {
             )}
             <button
               type="submit"
-              className="flex-1 btn-enchanted text-white font-heading text-sm uppercase tracking-widest py-3.5 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300"
+              disabled={salvando}
+              className="flex-1 btn-enchanted text-white font-heading text-sm uppercase tracking-widest py-3.5 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
             >
-              {salvo ? 'Salvo!' : 'Salvar'}
+              {salvando ? 'Salvando...' : salvo ? 'Salvo!' : profileExists ? 'Salvar' : 'Criar Conta'}
             </button>
           </div>
         </form>
       ) : (
         /* ======================== MODO LEITURA ======================== */
         <div className="space-y-6">
+          {/* Saved notification */}
+          {salvo && (
+            <div className="p-3 rounded-xl bg-green-900/20 border border-green-500/30 text-green-400 text-xs text-center animate-fade-in">
+              Perfil salvo com sucesso!
+            </div>
+          )}
+
           {/* Avatar + Nome */}
-          <div className="bg-cream-50 rounded-2xl border border-rose-light/30 p-6 text-center">
+          <div className="bg-[#2a1f14]/40 rounded-2xl border border-[#C8962E]/20 p-6 text-center">
             <div className="w-24 h-24 mx-auto mb-3 rounded-full bg-rose-pastel/40 border-2 border-rose-light/50 flex items-center justify-center text-5xl shadow-inner">
               {profile.avatar || '🎨'}
             </div>
@@ -380,15 +465,15 @@ export default function Perfil() {
             )}
           </div>
 
-          {/* Endereço */}
+          {/* Endereco */}
           {profile.rua && (
-            <div className="bg-cream-50 rounded-2xl border border-rose-light/30 p-5">
-              <h3 className="font-heading text-sm text-enchanted uppercase tracking-widest mb-3 flex items-center gap-2">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-rose-accent">
+            <div className="bg-[#2a1f14]/40 rounded-2xl border border-[#C8962E]/20 p-5">
+              <h3 className="font-heading text-sm text-[#C8962E] uppercase tracking-widest mb-3 flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#C8962E]">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" strokeLinecap="round" strokeLinejoin="round" />
                   <circle cx="12" cy="10" r="3" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                Endereço de Entrega
+                Endereco de Entrega
               </h3>
               <div className="text-sm text-enchanted-muted space-y-0.5">
                 <p>{profile.rua}, {profile.numero}{profile.complemento ? ` - ${profile.complemento}` : ''}</p>
@@ -398,76 +483,95 @@ export default function Perfil() {
             </div>
           )}
 
-          {/* Botão Editar */}
-          <button
-            onClick={handleEditar}
-            className="w-full bg-cream-50 border border-rose-light/50 text-rose-accent hover:text-rose-deep hover:border-rose-accent font-heading text-sm uppercase tracking-widest py-3.5 rounded-full cursor-pointer transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Editar Perfil
-          </button>
+          {/* Botoes */}
+          <div className="flex gap-3">
+            <button
+              onClick={handleEditar}
+              className="flex-1 bg-[#2a1f14]/40 border border-[#C8962E]/40 text-[#C8962E] hover:text-[#D4AF37] hover:border-[#C8962E] font-heading text-sm uppercase tracking-widest py-3.5 rounded-full cursor-pointer transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Editar
+            </button>
+            <button
+              onClick={handleLogout}
+              className="flex-1 bg-rose-pastel/20 border border-rose-accent/30 text-rose-accent hover:bg-rose-pastel/40 hover:border-rose-accent/50 font-heading text-sm uppercase tracking-widest py-3.5 rounded-full cursor-pointer transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Sair
+            </button>
+          </div>
         </div>
       )}
 
       {/* ======================== MEUS PEDIDOS ======================== */}
-      <div className="mt-8">
-        <div className="text-center mb-4">
-          <h2 className="font-display text-2xl text-enchanted mb-1">Meus Pedidos</h2>
-          <p className="text-enchanted-muted text-sm italic">Acompanhe o status das suas encomendas</p>
-        </div>
-
-        <FloralDivider className="mb-6" />
-
-        {carregandoPedidos ? (
-          <div className="text-center py-8">
-            <div className="w-8 h-8 border-2 border-rose-light border-t-rose-accent rounded-full animate-spin mx-auto mb-3" />
-            <p className="text-enchanted-muted text-sm italic">Carregando pedidos...</p>
+      {profileComplete && (
+        <div className="mt-8">
+          <div className="text-center mb-4">
+            <h2 className="papyrus-title" style={{ fontSize: '1.6rem' }}>Meus Pedidos</h2>
+            <p className="papyrus-subtitle">Acompanhe o status das suas encomendas</p>
           </div>
-        ) : pedidos.length === 0 ? (
-          <div className="bg-cream-50 rounded-2xl border border-rose-light/30 p-8 text-center">
-            <div className="w-14 h-14 bg-rose-pastel/40 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
-              📦
+
+          <FloralDivider className="mb-6" />
+
+          {carregandoPedidos ? (
+            <div className="text-center py-8">
+              <div className="w-8 h-8 border-2 border-rose-light border-t-rose-accent rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-enchanted-muted text-sm italic">Carregando pedidos...</p>
             </div>
-            <p className="font-heading text-sm text-enchanted mb-1">Nenhum pedido ainda</p>
-            <p className="text-enchanted-muted text-xs italic">
-              Quando você fizer sua primeira compra, o acompanhamento aparecerá aqui!
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {pedidos.map((pedido) => (
-              <div
-                key={pedido.id}
-                className="bg-cream-50 rounded-2xl border border-rose-light/30 p-5"
-              >
-                <div className="flex items-start justify-between mb-1">
-                  <div>
-                    <p className="font-heading text-sm text-enchanted">
-                      Pedido #{pedido.id}
-                    </p>
-                    <p className="text-enchanted-muted text-xs">
-                      {pedido.criado_em && formatDate(pedido.criado_em)}
-                    </p>
-                  </div>
-                  <span className="text-xs font-heading text-rose-accent bg-rose-pastel/30 px-2.5 py-1 rounded-full">
-                    Tam: {pedido.tamanho} &middot; Qtd: {pedido.quantidade}
-                  </span>
-                </div>
-
-                {pedido.observacoes && (
-                  <p className="text-enchanted-muted text-xs italic mt-1 mb-2">
-                    {pedido.observacoes.split('|')[0].trim()}
-                  </p>
-                )}
-
-                <LinhaProgresso status={pedido.status} />
+          ) : pedidos.length === 0 ? (
+            <div className="bg-[#2a1f14]/40 rounded-2xl border border-[#C8962E]/20 p-8 text-center">
+              <div className="w-14 h-14 bg-[#C8962E]/20 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                📦
               </div>
-            ))}
-          </div>
-        )}
+              <p className="font-heading text-sm text-[#e8d5b0] mb-1">Nenhum pedido ainda</p>
+              <p className="text-[#b8a080] text-xs italic">
+                Quando voce fizer sua primeira compra, o acompanhamento aparecera aqui!
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {pedidos.map((pedido) => (
+                <div
+                  key={pedido.id}
+                  className="bg-[#2a1f14]/40 rounded-2xl border border-[#C8962E]/20 p-5"
+                >
+                  <div className="flex items-start justify-between mb-1">
+                    <div>
+                      <p className="font-heading text-sm text-enchanted">
+                        Pedido #{pedido.id}
+                      </p>
+                      <p className="text-enchanted-muted text-xs">
+                        {pedido.criado_em && formatDate(pedido.criado_em)}
+                      </p>
+                    </div>
+                    <span className="text-xs font-heading text-rose-accent bg-rose-pastel/30 px-2.5 py-1 rounded-full">
+                      Tam: {pedido.tamanho} &middot; Qtd: {pedido.quantidade}
+                    </span>
+                  </div>
+
+                  {pedido.observacoes && (
+                    <p className="text-enchanted-muted text-xs italic mt-1 mb-2">
+                      {pedido.observacoes.split('|')[0].trim()}
+                    </p>
+                  )}
+
+                  <LinhaProgresso status={pedido.status} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+        </div>
+        <div className="papyrus-roll papyrus-roll-bottom" />
       </div>
     </div>
   )

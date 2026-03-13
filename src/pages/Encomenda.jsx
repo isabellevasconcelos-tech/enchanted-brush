@@ -290,8 +290,8 @@ export default function Encomenda() {
           </div>
         </div>
 
-        <div className="relative">
-          <span className="absolute -right-2 -top-2"><HiddenStar id="create-form" /></span>
+        <div className="flex justify-center mt-3">
+          <HiddenStar id="create-form" />
         </div>
       </div>
 

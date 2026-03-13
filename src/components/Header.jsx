@@ -7,18 +7,19 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
   const { totalItems } = useCart()
-  const { profile } = useProfile()
+  const { user, profile } = useProfile()
 
   const links = [
     { to: '/shop', label: 'Loja', icon: '🛍' },
     { to: '/hidden-stars', label: 'Estrelas Escondidas', icon: '⭐' },
     { to: '/limited', label: 'Peças Limitadas', icon: '👑' },
+    { to: '/criar-camisa', label: 'Criar Camisa', icon: '👕' },
   ]
 
   const isActive = (path) => location.pathname === path
 
   return (
-    <header className="bg-cream-50/90 backdrop-blur-sm sticky top-0 z-50">
+    <header className="bg-cream-50/95 backdrop-blur-md sticky top-0 z-50 border-b border-gold-accent/10">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="no-underline flex items-center gap-2 group">
@@ -45,28 +46,33 @@ export default function Header() {
               <span className="brand-sparkle absolute" style={{ top: '50%', left: '-4px', '--s-color': '#C0C0C0', '--s-size': '1.5px', '--s-speed': '2s', '--s-delay': '0.3s' }} />
               <span className="brand-sparkle absolute" style={{ top: '-2px', left: '55%', '--s-color': '#FFD700', '--s-size': '1px', '--s-speed': '1.6s', '--s-delay': '0.9s' }} />
             </span>
-            <span className="text-[9px] text-enchanted-muted/60 font-heading tracking-[0.2em] uppercase -mt-0.5 hidden sm:block">
-              Camisas pintadas a mao
+            <span className="text-[11px] text-enchanted-muted font-heading tracking-[0.15em] italic -mt-0.5">
+              Wear the magic of art.
             </span>
           </div>
         </Link>
 
         {/* Right side: Profile, Cart, Menu */}
         <div className="flex items-center gap-3">
-          {/* Profile */}
+          {/* Profile / Login */}
           <Link
-            to="/perfil"
+            to={user ? '/perfil' : '/login'}
             className="no-underline flex flex-col items-center gap-0.5 group"
           >
             <div className={`relative w-9 h-9 rounded-full bg-rose-pastel/40 border border-rose-light/50 flex items-center justify-center text-lg transition-all group-hover:border-rose-accent ${
-              isActive('/perfil') ? 'border-rose-accent shadow-md' : ''
+              isActive('/perfil') || isActive('/login') ? 'border-rose-accent shadow-md' : ''
             }`}>
-              {profile.avatar || '🎨'}
+              {user ? (profile.avatar || '🎨') : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-enchanted-muted group-hover:text-rose-accent transition-colors">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="12" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
             </div>
             <span className={`text-[9px] font-heading tracking-wider uppercase ${
-              isActive('/perfil') ? 'text-rose-accent' : 'text-enchanted-muted'
+              isActive('/perfil') || isActive('/login') ? 'text-rose-accent' : 'text-enchanted-muted'
             }`}>
-              Perfil
+              {user ? 'Perfil' : 'Entrar'}
             </span>
           </Link>
 

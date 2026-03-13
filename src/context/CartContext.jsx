@@ -13,10 +13,11 @@ export function CartProvider({ children }) {
     try {
       const saved = localStorage.getItem('enchanted-cart')
       if (!saved) return []
-      // Normalize old items that may lack modelagem
+      // Normalize old items that may lack modelagem or cor
       return JSON.parse(saved).map((item) => ({
         ...item,
         modelagem: item.modelagem || 'slim',
+        cor: item.cor || 'Branco',
       }))
     } catch {
       return []
@@ -32,19 +33,19 @@ export function CartProvider({ children }) {
     return item.modelagem === 'babylook' ? base + ACRESCIMO_BABYLOOK : base
   }
 
-  function addToCart(camisa, tamanho, quantidade = 1, modelagem = 'slim') {
+  function addToCart(camisa, tamanho, quantidade = 1, modelagem = 'slim', cor = 'Branco') {
     setItems((prev) => {
       const existing = prev.find(
-        (item) => item.camisa.id === camisa.id && item.tamanho === tamanho && item.modelagem === modelagem
+        (item) => item.camisa.id === camisa.id && item.tamanho === tamanho && item.modelagem === modelagem && (item.cor || 'Branco') === cor
       )
       if (existing) {
         return prev.map((item) =>
-          item.camisa.id === camisa.id && item.tamanho === tamanho && item.modelagem === modelagem
+          item.camisa.id === camisa.id && item.tamanho === tamanho && item.modelagem === modelagem && (item.cor || 'Branco') === cor
             ? { ...item, quantidade: item.quantidade + quantidade }
             : item
         )
       }
-      return [...prev, { camisa, tamanho, quantidade, modelagem }]
+      return [...prev, { camisa, tamanho, quantidade, modelagem, cor }]
     })
   }
 

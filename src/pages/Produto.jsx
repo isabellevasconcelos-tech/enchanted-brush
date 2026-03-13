@@ -16,6 +16,7 @@ export default function Produto() {
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState('')
   const [quantidade, setQuantidade] = useState(1)
   const [modelagem, setModelagem] = useState('slim')
+  const [corCamisa, setCorCamisa] = useState('Branco')
   const [adicionado, setAdicionado] = useState(false)
   const [verMais, setVerMais] = useState(false)
   const [zoomAberto, setZoomAberto] = useState(false)
@@ -44,7 +45,7 @@ export default function Produto() {
   const precoFinal = modelagem === 'babylook' ? Number(camisa?.preco || 0) + 20 : Number(camisa?.preco || 0)
 
   function handleAddToCart() {
-    addToCart(camisa, tamanhoSelecionado, quantidade, modelagem)
+    addToCart(camisa, tamanhoSelecionado, quantidade, modelagem, corCamisa)
     setAdicionado(true)
     setTimeout(() => setAdicionado(false), 3000)
   }
@@ -231,6 +232,35 @@ export default function Produto() {
               )}
             </p>
 
+            {/* Color Selector */}
+            <div className="mb-6">
+              <p className="font-heading text-sm text-enchanted uppercase tracking-widest mb-3">
+                Cor da Camisa
+              </p>
+              <div className="flex gap-3">
+                {[
+                  { name: 'Branco', hex: '#FFFFFF' },
+                  { name: 'Bege', hex: '#F5E6C8' },
+                  { name: 'Off-White', hex: '#FAF0E6' },
+                ].map((cor) => (
+                  <button
+                    key={cor.name}
+                    onClick={() => setCorCamisa(cor.name)}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-heading text-sm cursor-pointer transition-all duration-300 border-2 ${
+                      corCamisa === cor.name
+                        ? 'border-rose-accent shadow-md'
+                        : 'border-rose-light/50 hover:border-rose-medium'
+                    }`}
+                    style={{ backgroundColor: cor.hex }}
+                  >
+                    <span className={corCamisa === cor.name ? 'text-rose-accent font-semibold' : 'text-enchanted-muted'}>
+                      {cor.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Style Selector */}
             <div className="mb-6">
               <p className="font-heading text-sm text-enchanted uppercase tracking-widest mb-3">
@@ -310,7 +340,7 @@ export default function Produto() {
               </button>
               <button
                 onClick={() => {
-                  addToCart(camisa, tamanhoSelecionado, quantidade, modelagem)
+                  addToCart(camisa, tamanhoSelecionado, quantidade, modelagem, corCamisa)
                   navigate('/checkout')
                 }}
                 className="flex-1 btn-enchanted text-white font-heading text-sm uppercase tracking-widest py-3.5 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300"

@@ -19,11 +19,18 @@ import LimitedPieces from './pages/LimitedPieces'
 import Confirmacao from './pages/Confirmacao'
 import Carrinho from './pages/Carrinho'
 import Perfil from './pages/Perfil'
+import Login from './pages/Login'
 import Inspiracoes from './pages/Inspiracoes'
 import Personalizar from './pages/Personalizar'
+import CriarCamisa from './pages/CriarCamisa'
+import AuroraChat from './components/AuroraChat'
 
 function App() {
-  const [showSplash, setShowSplash] = useState(true)
+  // Skip splash when returning from OAuth
+  const isReturningFromAuth = sessionStorage.getItem('oauth_pending') === '1'
+    || window.location.hash.includes('access_token')
+    || window.location.search.includes('code=')
+  const [showSplash, setShowSplash] = useState(!isReturningFromAuth)
 
   return (
     <BrowserRouter>
@@ -32,10 +39,10 @@ function App() {
           <CartProvider>
             {showSplash && <SplashScreen onEnter={() => setShowSplash(false)} />}
             <div className="min-h-screen flex flex-col bg-cream-100 relative">
-              {/* Esfumado escuro no topo */}
-              <div className="pointer-events-none fixed top-0 left-0 right-0 h-32 z-40 bg-gradient-to-b from-[#0F0A05] via-[#0F0A05]/60 to-transparent" />
-              {/* Esfumado escuro na base */}
-              <div className="pointer-events-none fixed bottom-0 left-0 right-0 h-32 z-40 bg-gradient-to-t from-[#0F0A05] via-[#0F0A05]/60 to-transparent" />
+              {/* Esfumado vinho no topo */}
+              <div className="pointer-events-none fixed top-0 left-0 right-0 h-32 z-40 bg-gradient-to-b from-[#120610] via-[#120610]/60 to-transparent" />
+              {/* Esfumado vinho na base */}
+              <div className="pointer-events-none fixed bottom-0 left-0 right-0 h-32 z-40 bg-gradient-to-t from-[#120610] via-[#120610]/60 to-transparent" />
               <Header />
               <main className="flex-1 container mx-auto px-4 py-8">
                 <Routes>
@@ -49,9 +56,11 @@ function App() {
                   <Route path="/limited" element={<LimitedPieces />} />
                   <Route path="/confirmacao" element={<Confirmacao />} />
                   <Route path="/carrinho" element={<Carrinho />} />
+                  <Route path="/login" element={<Login />} />
                   <Route path="/perfil" element={<Perfil />} />
                   <Route path="/inspiracoes" element={<Inspiracoes />} />
                   <Route path="/personalizar" element={<Personalizar />} />
+                  <Route path="/criar-camisa" element={<CriarCamisa />} />
                 </Routes>
               </main>
               <Footer />
@@ -59,6 +68,7 @@ function App() {
             {!showSplash && <ProfileBanner />}
             {!showSplash && <StarCounter />}
             {!showSplash && <TouchSparkle />}
+            {!showSplash && <AuroraChat />}
           </CartProvider>
         </StarsProvider>
       </ProfileProvider>
