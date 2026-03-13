@@ -83,20 +83,13 @@ export default function Perfil() {
   const [pedidos, setPedidos] = useState([])
   const [carregandoPedidos, setCarregandoPedidos] = useState(false)
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/login')
-    }
-  }, [user, loading, navigate])
-
   // Start in edit mode if profile is not complete
   useEffect(() => {
-    if (!loading && user && !profileExists) {
+    if (!loading && !profileExists) {
       setEditando(true)
       setForm({ ...profile })
     }
-  }, [loading, user, profileExists, profile])
+  }, [loading, profileExists, profile])
 
   // Sync form when profile changes (after fetch)
   useEffect(() => {
@@ -191,8 +184,6 @@ export default function Perfil() {
       </div>
     )
   }
-
-  if (!user) return null
 
   return (
     <div className="max-w-3xl mx-auto animate-fade-in">

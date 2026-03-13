@@ -16,11 +16,24 @@ const EMPTY_PROFILE = {
   avatar: '🎨',
 }
 
+// localStorage helpers for manual (no-auth) profiles
+const LOCAL_PROFILE_KEY = 'enchanted_profile'
+function loadLocalProfile() {
+  try {
+    const saved = localStorage.getItem(LOCAL_PROFILE_KEY)
+    return saved ? JSON.parse(saved) : null
+  } catch { return null }
+}
+function saveLocalProfile(data) {
+  localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(data))
+}
+
 export function ProfileProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [profile, setProfile] = useState({ ...EMPTY_PROFILE })
+  const localData = loadLocalProfile()
+  const [profile, setProfile] = useState(localData ? { ...EMPTY_PROFILE, ...localData } : { ...EMPTY_PROFILE })
   const [loading, setLoading] = useState(true)
-  const [profileExists, setProfileExists] = useState(false)
+  const [profileExists, setProfileExists] = useState(!!localData)
 
   // Fetch profile from Supabase perfis table
   const fetchProfile = useCallback(async (userId) => {
@@ -78,13 +91,11 @@ export function ProfileProvider({ children }) {
     return () => subscription.unsubscribe()
   }, [fetchProfile])
 
-  // Profile is complete when user is logged in AND required fields are filled AND saved to DB
-  const profileComplete = !!(user && profileExists && profile.nome && profile.whatsapp && profile.email)
+  // Profile is complete when required fields are filled AND saved (to DB or localStorage)
+  const profileComplete = !!(profileExists && profile.nome && profile.whatsapp && profile.email)
 
-  // Save full profile to Supabase
+  // Save full profile to Supabase (or localStorage if no auth)
   async function saveProfile(data) {
-    if (!user) return { error: { message: 'Voce precisa estar logado' } }
-
     // Validate required fields
     if (!data.nome?.trim()) return { error: { message: 'Nome e obrigatorio' } }
     if (!data.email?.trim()) return { error: { message: 'E-mail e obrigatorio' } }
@@ -103,7 +114,6 @@ export function ProfileProvider({ children }) {
     }
 
     const profileData = {
-      id: user.id,
       nome: data.nome.trim(),
       email: data.email.trim(),
       whatsapp: data.whatsapp.trim(),
@@ -116,16 +126,21 @@ export function ProfileProvider({ children }) {
       avatar: data.avatar || '🎨',
     }
 
-    const { error } = await supabase
-      .from('perfis')
-      .upsert(profileData)
+    if (user) {
+      // Save to Supabase
+      const { error } = await supabase
+        .from('perfis')
+        .upsert({ id: user.id, ...profileData })
 
-    if (!error) {
-      setProfile(profileData)
-      setProfileExists(true)
+      if (error) return { error }
     }
 
-    return { error }
+    // Always save to localStorage as backup
+    saveLocalProfile(profileData)
+    setProfile(profileData)
+    setProfileExists(true)
+
+    return { error: null }
   }
 
   // Partial update

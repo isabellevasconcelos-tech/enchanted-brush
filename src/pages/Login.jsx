@@ -173,10 +173,29 @@ export default function Login() {
             Entrar com WhatsApp
           </button>
 
+          {/* Divider */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="h-px flex-1 bg-gold-accent/20" />
+            <span className="text-enchanted-muted text-xs italic">ou</span>
+            <div className="h-px flex-1 bg-gold-accent/20" />
+          </div>
+
+          {/* Manual */}
+          <button
+            onClick={() => navigate('/perfil')}
+            className="w-full flex items-center justify-center gap-3 border-2 border-gold-accent/40 text-gold-accent font-heading text-sm uppercase tracking-widest py-3.5 rounded-full cursor-pointer hover:bg-gold-accent/10 hover:border-gold-accent transition-all duration-300"
+            style={{ background: 'linear-gradient(145deg, #1A0A12, #22101A)' }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gold-accent">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Preencher Manualmente
+          </button>
+
           {/* Info */}
           <p className="text-enchanted-muted text-[11px] text-center italic mt-4">
-            Se voce ja tem uma conta, seus dados serao carregados automaticamente.
-            Se nao, voce podera criar uma nova conta apos o login.
+            Use Google ou WhatsApp para login rapido, ou preencha seus dados manualmente.
           </p>
         </div>
       )}
